@@ -2,7 +2,7 @@
 _______________________________________________________________________________________________________________________
 This is the third university project for the Data Structures course.
 _______________________________________________________________________________________________________________________
-__-> data structure composed of smaller strings that is used to efficiently store and manipulate a very long string.
+__-> data structure composed of smaller strings that is used to efficiently store and manipulate a very long string.__
 _______________________________________________________________________________________________________________________
 
 A rope is a binary tree where each leaf (end node) holds a string and a length (also known as a "weight"), and each
