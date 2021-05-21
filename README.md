@@ -12,9 +12,14 @@ stores the second part of the string, and a node's weight is the length of the f
 
 __Operations__
 
-__1.__ Concat 
+__1.__ Concat
+
 __2.__ Index
+
 __3.__ Search
+
 __4.__ Split
+
 __5.__ Insert
+
 __6.__ Delete
