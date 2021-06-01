@@ -96,7 +96,6 @@ RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
 }
 
 static char __indexRope(RopeNode *rn, int idx) {
-    
     if(rn->weight <= idx && rn->right != NULL){
         return __indexRope(rn->right, idx - rn->weight);
     }
@@ -115,12 +114,12 @@ char indexRope(RopeTree* rt, int idx) {
     return 0;
 }
 
-// char* search(RopeTree* rt, int start, int end) {
-//     char *c = malloc(sizeof(char) * (end - start));
-//     for(int i = start; i < end; i++)
-//         c[i - start] = indexRope(rt, i);
-//     return c;
-// }
+char* search(RopeTree* rt, int start, int end) {
+    char *c = calloc(end - start + 1, sizeof(char));
+    for(int i = start; i < end; i++)
+        c[i - start] = indexRope(rt, i);
+    return c;
+}
 
 // SplitPair split(RopeTree* rt, int idx) {
 //     RopeNode *left = makeRopeNode(strdup(EMPTY));
