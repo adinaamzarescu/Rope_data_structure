@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include "utils.h"
 
 #define EMPTY ""
 
@@ -15,14 +16,14 @@ RopeNode* makeRopeNode(const char* str) {
     new_node->left = NULL;
     new_node->right = NULL;
     new_node->str = str;
-    new_node->weight = strlen(str);
+    new_node->weight = 0;
 
     return new_node;
 }
 
 RopeTree* makeRopeTree(RopeNode* root) {
     if(!root)
-        return;
+        return 0;
 
     RopeTree *new_tree = malloc(sizeof(*new_tree));
     DIE(!new_tree, "New tree malloc failed");
@@ -84,12 +85,12 @@ int getNodeWeight(RopeNode *rt) {
 
 RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
 
-    RopeNode *new_root = makeRopeNode(strdup(EMPTY));    
-    new_root->weight = getNodeWeight(rt1->root);
-
+    RopeNode *new_root = makeRopeNode(0); 
     new_root->left = rt1->root;
     new_root->right = rt2->root;
 
+    new_root->weight = getNodeWeight(rt1->root);
+    
     RopeTree *new_tree = makeRopeTree(new_root);
     return new_tree;
 }
@@ -97,53 +98,54 @@ RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
 
 
 char indexRope(RopeTree* rt, int idx) {
-    // TODO 2. Index - 10p
-
+    RopeNode *current= rt->root;
+    if(current->weight < idx && current->right != NULL){
+        rt->root = current->right;
+        return indexRope(rt, idx - current->weight);
+    }
+    if(current->left != NULL){
+        rt->root = current->left;
+        return indexRope(rt, idx);
+    }
+    return current->str[idx];
 }
 
-// Pe asta nu am facut-o complet
 char* search(RopeTree* rt, int start, int end) {
-    // TODO 3. Search - 20p
-    if ((end > strlen(rt->root->str) - 1) || (start > end))
-        return;
-
-    RopeNode *src_root = makeRopeNode(strdup(EMPTY));
-    src_root->weight = getNodeWeight(rt->root);
-    RopeTree *src_tree = makeRopeTree(src_root);
-
-    // src_root->right = ;
-    return src_root;
+    char *c = malloc(sizeof(char) * (end - start));
+    for(int i = start; i < end; i++)
+        c[i - start] = indexRope(rt, i);
+    return c;
 }
 
-SplitPair split(RopeTree* rt, int idx) {
-    // TODO 4. Split - 20p
-    // RopeNode *left = makeRopeNode(strdup(EMPTY)), 
-    //          *right = makeRopeNode(strdup(EMPTY));
-    // right = left ->right;
-    // left->right = NULL;
+// SplitPair split(RopeTree* rt, int idx) {
+//     RopeNode *left = makeRopeNode(strdup(EMPTY));
+//     RopeNode *right = makeRopeNode(strdup(EMPTY));
+//     right = left ->right;
+//     left->right = NULL;
 
-    // left->weight = getNodeWeight(left);
+//     left->weight = getNodeWeight(left);
 
-    // RopeTree *tree1 = makeRopeTree(left),
-    //          *tree2 = makeRopeTree(right);
+//     RopeTree *tree1 = makeRopeTree(left),
+//              *tree2 = makeRopeTree(right);
     
-    // tree1->root = left;
-    // tree1->root->weight = left->weight;
-    
+//     tree1->root = left;
+//     tree1->root->weight = left->weight;
     
 
-}
 
-RopeTree* insert(RopeTree* rt, int idx, const char* str) {
-    // TODO 5. Insert - 5p
-    debugRopeNode(rt->root, rt->root->weight);
+// }
 
-    // RopeNode *new_node = ;
-}
+// RopeTree* insert(RopeTree* rt, int idx, const char* str) {
+//     // TODO 5. Insert - 5p
+//     debugRopeNode(rt->root, rt->root->weight);
+//     
+    
+//     // RopeNode *new_node = ;
+// }
 
-RopeTree* delete(RopeTree* rt, int start, int len) {
-    // TODO 6. Delete - 5p
+// RopeTree* delete(RopeTree* rt, int start, int len) {
+//     // TODO 6. Delete - 5p
      
-}
+// }
 
-// FINAL 10p -> complex test involving all operations
+// // FINAL 10p -> complex test involving all operations
