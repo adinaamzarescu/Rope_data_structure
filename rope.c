@@ -95,23 +95,27 @@ RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
     return new_tree;
 }
 
+static char __indexRope(RopeNode *rn, int idx) {
+    if(rn->weight <= idx && rn->right != NULL){
+        return __indexRope(rn->right, idx - rn->weight);
+    }
 
+    if(rn->left != NULL){
+        return __indexRope(rn->left, idx);
+    }
+    
+    return rn->str[idx];
+}
 
 char indexRope(RopeTree* rt, int idx) {
-    RopeNode *current= rt->root;
-    if(current->weight < idx && current->right != NULL){
-        rt->root = current->right;
-        return indexRope(rt, idx - current->weight);
+    if (rt->root != NULL) {
+        return __indexRope(rt->root, idx);
     }
-    if(current->left != NULL){
-        rt->root = current->left;
-        return indexRope(rt, idx);
-    }
-    return current->str[idx];
+    return 0;
 }
 
 char* search(RopeTree* rt, int start, int end) {
-    char *c = malloc(sizeof(char) * (end - start));
+    char *c = calloc(end - start + 1, sizeof(char));
     for(int i = start; i < end; i++)
         c[i - start] = indexRope(rt, i);
     return c;
