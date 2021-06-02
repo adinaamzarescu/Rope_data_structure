@@ -36,11 +36,11 @@ RopeTree* makeRopeTree(RopeNode* root) {
 void printRopeNode(RopeNode* rn) {
 
     if (!rn)
-        return;
+        return NULL;
 
     if (!(rn->left) && !(rn->right)) {
         printf("%s", rn->str);
-        return;
+        return NULL;
     }
 
     printRopeNode(rn->left);
@@ -57,7 +57,7 @@ void printRopeTree(RopeTree* rt) {
 
 void debugRopeNode(RopeNode* rn, int indent) {
     if (!rn)
-        return;
+        return NULL;
 
     for (int i = 0; i < indent; ++i)
         printf("%s", " ");
@@ -121,23 +121,142 @@ char* search(RopeTree* rt, int start, int end) {
     return c;
 }
 
-// SplitPair split(RopeTree* rt, int idx) {
-//     RopeNode *left = makeRopeNode(strdup(EMPTY));
-//     RopeNode *right = makeRopeNode(strdup(EMPTY));
-//     right = left ->right;
-//     left->right = NULL;
+RopeNode* concat_n(RopeNode* rn1, RopeNode* rn2) {
+    RopeNode *new_root = makeRopeNode(my_strdup(EMPTY));
 
-//     left->weight = getNodeWeight(left);
+    new_root->weight = rn1->weight;
+    new_root->left = rn1;
+    new_root->right = rn2;
 
-//     RopeTree *tree1 = makeRopeTree(left),
-//              *tree2 = makeRopeTree(right);
+    return new_root;
+}
+
+RopeNode *copy_tree(RopeNode *rn) {
+	if(!rn)
+    	return;
     
-//     tree1->root = left;
-//     tree1->root->weight = left->weight;
+    RopeNode* copy_node = makeRopeNode(my_strdup(rn->str));
+    copy_node->weight = rn->weight;
     
+    copy_node->left = copy_tree(rn->left);
+    copy_node->right = copy_tree(rn->right);
+    
+    return copy_node;
+}
 
+static void split_one(RopeNode* rn, int *idx) {
 
-// }
+    int i;
+
+	if (rn->left == NULL && rn->right == NULL) {
+		if (*idx != 0) {
+			char *str1 = malloc(*idx + 1);
+			char *str2 = malloc(rn->weight - *idx + 1);
+			
+			for (i = 0; i < *idx; ++i)
+   				str1[i] = (rn->str)[i];
+   			str1[i] = '\0';
+
+   			for (i = *idx; i < rn->weight; ++i)
+   				str2[i - *idx] = (rn->str)[i];
+   			str2[i - *idx] = '\0';
+
+			free((void *)(rn->str));
+			rn->str = my_strdup(EMPTY);
+
+			RopeNode *rn1 = makeRopeNode(str1);
+			RopeNode *rn2 = makeRopeNode(str2);
+
+			rn->left = rn1;
+			rn->right = rn2;
+			rn->weight = getNodeWeight(rn->left);
+		}
+
+		return NULL;
+	}
+
+	int weight = getNodeWeight(rn->left);
+
+	if (*idx < weight) {
+		split_one(rn->left, idx);
+	} else {
+		*idx -= weight;
+		split_one(rn->right, idx);
+	}
+}
+
+static RopeNode* split_two(RopeNode* rn, int *idx, char c) {
+
+    int weight;
+
+    if ((rn->right->str)[0] == c && (rn->left->str)[0] != c) {
+        RopeNode* right_copy = rn->right;
+
+		rn->right = NULL;
+
+		return right_copy;
+    } else if ((rn->left->str)[0] == c) {
+        RopeNode* right_copy = rn->right;
+		RopeNode* left_copy = rn->left;
+
+		rn->right = NULL;
+		rn->left = NULL;
+
+		return concat_n(left_copy, right_copy);
+    }
+
+	weight = getNodeWeight(rn->left);
+
+    if (*idx >= weight) {
+        *idx -= weight;
+		return split_two(rn->right, idx, c);
+    } else if (*idx < weight) {
+        RopeNode *right_two = rn->right;
+
+		rn->right = NULL;
+
+		return concat_n(split_two(rn->left, idx, c), right_two);
+    }
+}
+
+SplitPair split(RopeTree* rt, int idx) {
+    SplitPair pair;
+    int idx_copy;
+    char index;
+
+    RopeNode* new_root = copy_tree(rt->root);
+
+    if (idx >= getNodeWeight(new_root)) {
+        pair.right = NULL;
+    	pair.left = new_root;
+    	return pair;
+    }
+
+    idx_copy = idx;
+    index = indexRope(rt, idx_copy);
+
+	idx_copy = idx;
+	split_one(new_root, &idx_copy);
+
+	idx_copy = idx;
+    pair.right = split_two(new_root, &idx_copy, index);
+    pair.left = new_root;
+    
+    return pair;
+}
+char* my_strdup(const char* str)
+{
+	int len;
+	char* dup;
+
+	len = strlen(str) + 1;
+	dup = malloc(len);
+	if(!dup)
+		return NULL;
+	dup = strcpy(dup, str);
+	dup[len - 1] = '\0';
+	return (dup);
+}
 
 // RopeTree* insert(RopeTree* rt, int idx, const char* str) {
 //     // TODO 5. Insert - 5p
