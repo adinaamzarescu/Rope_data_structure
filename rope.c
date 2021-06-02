@@ -172,7 +172,7 @@ static void split_one(RopeNode* rn, int *idx) {
 			rn->weight = getNodeWeight(rn->left);
 		}
 
-		return NULL;
+		return NULL; 
 	}
 
 	int weight = getNodeWeight(rn->left);
