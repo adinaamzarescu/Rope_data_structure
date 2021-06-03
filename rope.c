@@ -7,8 +7,6 @@
 
 #define EMPTY ""
 
-
-
 RopeNode* makeRopeNode(const char* str) {
 	RopeNode *new_node = malloc(sizeof(*new_node));
 	DIE(!new_node, "New node malloc failed");
@@ -126,15 +124,16 @@ RopeNode* concat_n(RopeNode* rn1, RopeNode* rn2) {
 }
 
 RopeNode *copy_tree(RopeNode *rn) {
-	if (!rn)
-		return NULL;
-	
-	RopeNode* copy_node = makeRopeNode(my_strdup(rn->str));
-	copy_node->weight = rn->weight;
-	
-	copy_node->left = copy_tree(rn->left);
-	copy_node->right = copy_tree(rn->right);
-	return copy_node;
+	if(!rn)
+    	return NULL;
+    
+    RopeNode* copy_node = makeRopeNode(my_strdup(rn->str));
+    copy_node->weight = rn->weight;
+    
+    copy_node->left = copy_tree(rn->left);
+    copy_node->right = copy_tree(rn->right);
+    
+    return copy_node;
 }
 
 static void split_one(RopeNode* rn, int *idx) {
@@ -163,8 +162,8 @@ static void split_one(RopeNode* rn, int *idx) {
 			rn->right = rn2;
 			rn->weight = getNodeWeight(rn->left);
 		}
-
-		return 0;
+    
+		return NULL; 
 	}
 
 	int weight = getNodeWeight(rn->left);
@@ -298,5 +297,5 @@ void freeRopeTree(RopeTree* rt) {
 
    freeRopeNode(rt->root);
 }
+// // FINAL 10p -> complex test involving all operations
 
-// FINAL 10p -> complex test involving all operations
