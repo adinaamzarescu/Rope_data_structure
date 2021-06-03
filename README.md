@@ -30,6 +30,7 @@ __3. Search__
 __4. Split__
 
   Divide the rope into 2 on position i and there are 2 cases:
+  
       * Split point being the last character of a leaf node
       * Split point being a middle character of a leaf node.
 
