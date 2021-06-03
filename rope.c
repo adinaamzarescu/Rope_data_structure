@@ -133,7 +133,7 @@ RopeNode* concat_n(RopeNode* rn1, RopeNode* rn2) {
 
 RopeNode *copy_tree(RopeNode *rn) {
 	if(!rn)
-    	return;
+    	return NULL;
     
     RopeNode* copy_node = makeRopeNode(my_strdup(rn->str));
     copy_node->weight = rn->weight;
