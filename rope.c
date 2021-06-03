@@ -33,11 +33,11 @@ RopeTree* makeRopeTree(RopeNode* root) {
 
 void printRopeNode(RopeNode* rn) {
 	if (!rn)
-		return 0;
+		return;
 
 	if (!(rn->left) && !(rn->right)) {
 		printf("%s", rn->str);
-		return 0;
+		return;
 	}
 
 	printRopeNode(rn->left);
@@ -53,7 +53,7 @@ void printRopeTree(RopeTree* rt) {
 
 void debugRopeNode(RopeNode* rn, int indent) {
 	if (!rn)
-		return 0;
+		return;
 
 	for (int i = 0; i < indent; ++i)
 		printf("%s", " ");
@@ -78,16 +78,16 @@ int getNodeWeight(RopeNode *rt) {
 }
 
 RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
-	RopeNode *new_root = makeRopeNode(0); 
+	RopeNode *new_root = makeRopeNode(0);
 	new_root->left = rt1->root;
 	new_root->right = rt2->root;
 	new_root->weight = getNodeWeight(rt1->root);
-	
+
 	RopeTree *new_tree = makeRopeTree(new_root);
 	return new_tree;
 }
 
-static char __indexRope(RopeNode *rn, int idx) {
+char __indexRope(RopeNode *rn, int idx) {
 	if (rn->weight <= idx && rn->right != NULL) {
 		return __indexRope(rn->right, idx - rn->weight);
 	}
@@ -95,7 +95,7 @@ static char __indexRope(RopeNode *rn, int idx) {
 	if (rn->left != NULL) {
 		return __indexRope(rn->left, idx);
 	}
-	
+
 	return rn->str[idx];
 }
 
@@ -124,46 +124,45 @@ RopeNode* concat_n(RopeNode* rn1, RopeNode* rn2) {
 }
 
 RopeNode *copy_tree(RopeNode *rn) {
-	if(!rn)
-    	return NULL;
-    
-    RopeNode* copy_node = makeRopeNode(my_strdup(rn->str));
-    copy_node->weight = rn->weight;
-    
-    copy_node->left = copy_tree(rn->left);
-    copy_node->right = copy_tree(rn->right);
-    
-    return copy_node;
+	if (!rn)
+		return NULL;
+
+	RopeNode* copy_node = makeRopeNode(my_strdup(rn->str));
+	copy_node->weight = rn->weight;
+
+	copy_node->left = copy_tree(rn->left);
+	copy_node->right = copy_tree(rn->right);
+	return copy_node;
 }
 
-static void split_one(RopeNode* rn, int *idx) {
+void split_one(RopeNode* rn, int *idx) {
 	int i;
 
 	if (rn->left == NULL && rn->right == NULL) {
 		if (*idx != 0) {
 			char *str1 = malloc(*idx + 1);
 			char *str2 = malloc(rn->weight - *idx + 1);
-			
-			for (i = 0; i < *idx; ++i)
-   				str1[i] = (rn->str)[i];
-   			str1[i] = '\0';
 
-   			for (i = *idx; i < rn->weight; ++i)
-   				str2[i - *idx] = (rn->str)[i];
-   			str2[i - *idx] = '\0';
+			for (i = 0; i < *idx; ++i)
+				str1[i] = (rn->str)[i];
+			str1[i] = '\0';
+
+			for (i = *idx; i < rn->weight; ++i)
+				str2[i - *idx] = (rn->str)[i];
+			str2[i - *idx] = '\0';
 
 			free((void *)(rn->str));
 			rn->str = my_strdup(EMPTY);
 
 			RopeNode *rn1 = makeRopeNode(str1),
-					 *rn2 = makeRopeNode(str2);
+						*rn2 = makeRopeNode(str2);
 
 			rn->left = rn1;
 			rn->right = rn2;
 			rn->weight = getNodeWeight(rn->left);
 		}
-    
-		return NULL; 
+
+		return;
 	}
 
 	int weight = getNodeWeight(rn->left);
@@ -176,7 +175,7 @@ static void split_one(RopeNode* rn, int *idx) {
 	}
 }
 
-static RopeNode* split_two(RopeNode* rn, int *idx, char c) {
+RopeNode* split_two(RopeNode* rn, int *idx, char c) {
 	int weight;
 
 	if ((rn->right->str)[0] == c && (rn->left->str)[0] != c) {
@@ -207,6 +206,8 @@ static RopeNode* split_two(RopeNode* rn, int *idx, char c) {
 
 		return concat_n(split_two(rn->left, idx, c), right_two);
 	}
+
+	return NULL;
 }
 
 SplitPair split(RopeTree* rt, int idx) {
@@ -231,7 +232,7 @@ SplitPair split(RopeTree* rt, int idx) {
 	idx_copy = idx;
 	pair.right = split_two(new_root, &idx_copy, index);
 	pair.left = new_root;
-	
+
 	return pair;
 }
 
@@ -274,28 +275,9 @@ RopeTree* delete(RopeTree* rt, int start, int len) {
 	SplitPair pair_one = split(rt, start),
 			  pair_two = split(rt, start + len);
 
-	RopeNode *new_root = concat_n(pair_one.left, pair_two.right),
-			 *new_tree = makeRopeTree(new_root);
+	RopeNode *new_root = concat_n(pair_one.left, pair_two.right);
+	RopeTree *new_tree = makeRopeTree(new_root);
 
 	return new_tree;
 }
-
-void freeRopeNode(RopeNode* rn) {
-	if (!rn)
-		return;
-
-	free((void*)rn->str);
-	freeRopeNode(rn->left);
-	freeRopeNode(rn->right);
-	free(rn);
-}
-
-
-void freeRopeTree(RopeTree* rt) {
-   if (!rt)
-	return;
-
-   freeRopeNode(rt->root);
-}
-// // FINAL 10p -> complex test involving all operations
-
+// FINAL 10p -> complex test involving all operations
