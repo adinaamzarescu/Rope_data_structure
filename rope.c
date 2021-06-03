@@ -79,6 +79,7 @@ int getNodeWeight(RopeNode *rt) {
 
 RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
 	RopeNode *new_root = makeRopeNode(my_strdup(EMPTY));
+
 	new_root->left = rt1->root;
 	new_root->right = rt2->root;
 	new_root->weight = getNodeWeight(rt1->root);
@@ -87,12 +88,14 @@ RopeTree* concat(RopeTree* rt1, RopeTree* rt2) {
 	return new_tree;
 }
 
+// Recursive function to find the index
 char __indexRope(RopeNode *rn, int idx) {
-	if (rn->weight <= idx && rn->right != NULL) {
+	// If the weight isn't more than the given index
+	if (rn->weight <= idx && rn->right) {
 		return __indexRope(rn->right, idx - rn->weight);
 	}
-
-	if (rn->left != NULL) {
+	// Only if the left node exists
+	if (rn->left) {
 		return __indexRope(rn->left, idx);
 	}
 
@@ -100,7 +103,7 @@ char __indexRope(RopeNode *rn, int idx) {
 }
 
 char indexRope(RopeTree* rt, int idx) {
-	if (rt->root != NULL) {
+	if (rt->root) {
 		return __indexRope(rt->root, idx);
 	}
 	return 0;
@@ -109,28 +112,23 @@ char indexRope(RopeTree* rt, int idx) {
 char* search(RopeTree* rt, int start, int end) {
 	char *c = calloc(end - start + 1, sizeof(char));
 	for (int i = start; i < end; i++)
+		// The index has to be i - start
 		c[i - start] = indexRope(rt, i);
 	return c;
 }
-
+// Concatenantion of nodes
 RopeNode* concat_n(RopeNode* rn1, RopeNode* rn2) {
 	RopeNode *new_root = makeRopeNode(my_strdup(EMPTY));
 	if (rn1 && rn2) {
+		// Asigning values and adresses to the new node
 		new_root->weight = rn1->weight;
 		new_root->left = rn1;
 		new_root->right = rn2;
 	}
-	// } else {
-	// 	new_root->weight = 0;
-	// 	new_root->left = NULL;
-	// 	if(rn2)
-	// 		new_root->right = rn2;
-	// 	else
-	// 		new_root->right = NULL;
-	// }
 	return new_root;
 }
 
+// Function to copy the given tree
 RopeNode *copy_tree(RopeNode *rn) {
 	if (!rn)
 		return NULL;
@@ -145,28 +143,34 @@ RopeNode *copy_tree(RopeNode *rn) {
 
 void split_one(RopeNode* rn, int *idx) {
 	int i;
-
+	// Only if the nodes don't exist
 	if (rn->left == NULL && rn->right == NULL) {
 		if (*idx != 0) {
-			char *str1 = malloc(*idx + 1);
-			char *str2 = malloc(rn->weight - *idx + 1);
-
+			// Allocating memory for the strings
+			char *s1 = malloc(*idx + 1);
+			char *s2 = malloc(rn->weight - *idx + 1);
+			// Building the first string
 			for (i = 0; i < *idx; ++i)
-				str1[i] = (rn->str)[i];
-			str1[i] = '\0';
-
+				s1[i] = (rn->str)[i];
+			s1[i] = '\0';
+			// Building the second string
 			for (i = *idx; i < rn->weight; ++i)
-				str2[i - *idx] = (rn->str)[i];
-			str2[i - *idx] = '\0';
-
+				s2[i - *idx] = (rn->str)[i];
+			s2[i - *idx] = '\0';
+			// Emptying the node
 			free((void *)(rn->str));
 			rn->str = my_strdup(EMPTY);
-
-			RopeNode *rn1 = makeRopeNode(str1),
-						*rn2 = makeRopeNode(str2);
-
+			// Creating 2 new nodes
+			// Those nodes have the strings
+			// created above
+			RopeNode *rn1 = makeRopeNode(s1),
+					 *rn2 = makeRopeNode(s2);
+			
+			// Linking them to the given
+			// node of the rope
 			rn->left = rn1;
 			rn->right = rn2;
+			// The weight is only the left's
 			rn->weight = getNodeWeight(rn->left);
 		}
 
@@ -176,43 +180,58 @@ void split_one(RopeNode* rn, int *idx) {
 	int weight = getNodeWeight(rn->left);
 
 	if (*idx < weight) {
+		// Recursivelly calling the function
 		split_one(rn->left, idx);
 	} else {
-		*idx -= weight;
+		// Substracting the weight
+		*idx = *idx - weight;
+		// Recursivelly calling the function
 		split_one(rn->right, idx);
 	}
 }
 
 RopeNode* split_two(RopeNode* rn, int *idx, char c) {
 	int weight;
-
+	// Only if the nodes exist
 	if (rn->right && rn->left) {
+		// If the first character of the right node's string
+		// is equal to the given character and the
+		// first character of the left node's string
+		// is not equal to the given character
 		if ((rn->right->str)[0] == c && (rn->left->str)[0] != c) {
 			RopeNode* right_copy = rn->right;
-
+			// The right node has to be empty
 			rn->right = NULL;
-
+			// Returning the copy
 			return right_copy;
 		} else if ((rn->left->str)[0] == c) {
+		// If the first character of the left node's string
+		// is equal to the given character
+			// Creating copies
 			RopeNode* right_copy = rn->right;
 			RopeNode* left_copy = rn->left;
-
+			// The nodes has to be empty
 			rn->right = NULL;
 			rn->left = NULL;
-
+			// Recursivelly calling the function
+			// with the copies created above
 			return concat_n(left_copy, right_copy);
 		}
-
+		// The weight is only the left node's weight
 		weight = getNodeWeight(rn->left);
 
 		if (*idx >= weight) {
-			*idx -= weight;
+			*idx = *idx - weight;
 			return split_two(rn->right, idx, c);
 		} else if (*idx < weight) {
 			RopeNode *right_two = rn->right;
 
 			rn->right = NULL;
-
+			// If the index is lower than thw weight
+			// the concat function is called
+			// with the split function between
+			// the left node, the index and the given character c
+			// and the right copy
 			return concat_n(split_two(rn->left, idx, c), right_two);
 		}
 	}
@@ -226,9 +245,9 @@ SplitPair split(RopeTree* rt, int idx) {
 	char index;
 
 	idx_copy = idx;
-
+	// Creating a new root
 	RopeNode* new_root = copy_tree(rt->root);
-
+	// If the index is higher than the weight of the new root
 	if (idx >= getNodeWeight(new_root)) {
 		pair.left = new_root;
 		pair.right = makeRopeNode(my_strdup(EMPTY));
@@ -236,18 +255,17 @@ SplitPair split(RopeTree* rt, int idx) {
 	}
 
 	index = indexRope(rt, idx_copy);
-
+	// First split
 	idx_copy = idx;
 	split_one(new_root, &idx_copy);
-
+	// Second split
 	idx_copy = idx;
 	pair.right = split_two(new_root, &idx_copy, index);
 	pair.left = new_root;
 
 	return pair;
 }
-
-
+// Creating a strdup function
 char* my_strdup(const char* str)
 {
 	int len;
@@ -266,6 +284,7 @@ char* my_strdup(const char* str)
 }
 
 RopeTree* insert(RopeTree* rt, int idx, const char* str) {
+	// One split and a concatenation
 	if(!rt)
 		return NULL;
 
@@ -281,6 +300,7 @@ RopeTree* insert(RopeTree* rt, int idx, const char* str) {
 }
 
 RopeTree* delete(RopeTree* rt, int start, int len) {
+	// Two splits and a concatenation
 	if(!rt)
 		return NULL;
 
@@ -292,4 +312,3 @@ RopeTree* delete(RopeTree* rt, int start, int len) {
 
 	return new_tree;
 }
-// FINAL 10p -> complex test involving all operations
