@@ -1,6 +1,7 @@
 # Rope data structure
 _______________________________________________________________________________________________________________________
 This is the third university project for the Data Structures course.
+
 Copyright 2021 Amzarescu Adina-Maria & Popescu Maria-Mateea
 _______________________________________________________________________________________________________________________
 __-> data structure composed of smaller strings that is used to efficiently store and manipulate a very long string.__
