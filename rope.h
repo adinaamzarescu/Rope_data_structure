@@ -38,7 +38,7 @@ void debugRopeNode(RopeNode* rn, int indent);
 
 RopeTree* concat(RopeTree* rt1, RopeTree* rt2);
 
-RopeNode* concat_nodes(RopeNode* rn1, RopeNode* rn2);
+RopeNode* concat_n(RopeNode* rn1, RopeNode* rn2);
 
 char indexRope(RopeTree* rt, int idx);
 
@@ -48,18 +48,14 @@ char* search(RopeTree* rt, int start, int end);
 
 SplitPair split(RopeTree* rt, int idx);
 
+void split_one(RopeNode* rn, int *idx);
+
 RopeTree* insert(RopeTree* rt, int idx, const char* str);
 
 RopeTree* delete(RopeTree* rt, int start, int len);
 
-char* my_strdup(const char* str);
-
-RopeNode* second_split(RopeNode* rn, int *idx, char c);
-
-void first_split(RopeNode* rn, int *idx);
-
 RopeNode *copy_tree(RopeNode *rn);
 
-char* search(RopeTree* rt, int start, int end);
+char* my_strdup(const char* str);
 
 #endif  // __ROPE__
