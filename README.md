@@ -13,26 +13,32 @@ stores the second part of the string, and a node's weight is the length of the f
 
 __Operations__
 
-  __1.__ Concat
-  Concatenation - Join 2 ropes(s1 and s2) by adding another knot that
+  __1.__ Concatenation
+  
+   Join 2 ropes(s1 and s2) by adding another knot that
 will become the root and its weight becomes the sum of weights of leaf
 nodes in S1.
 
 __2.__ Index
+
   Find the character at ith position
   
 __3.__ Search
+
   Find the characters between 2 positions
 
 __4.__ Split
+
   Divide the rope into 2 on position i and there are 2 cases:
       * Split point being the last character of a leaf node
       * Split point being a middle character of a leaf node.
 
 __5.__ Insertion
+
   Add a string at position i by splitting the rope at this
 position followed by 2 concatenations
 
 __6.__ Deletion
+
   Delete a string from an interval by 2 splits of the rope
 followed by a concatenation
