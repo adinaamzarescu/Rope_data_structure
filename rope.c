@@ -7,8 +7,6 @@
 
 #define EMPTY ""
 
-
-
 RopeNode* makeRopeNode(const char* str) {
 	RopeNode *new_node = malloc(sizeof(*new_node));
 	DIE(!new_node, "New node malloc failed");
@@ -282,5 +280,4 @@ RopeTree* delete(RopeTree* rt, int start, int len) {
 
 	return new_tree;
 }
-
 // FINAL 10p -> complex test involving all operations
