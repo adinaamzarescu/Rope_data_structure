@@ -62,4 +62,8 @@ RopeNode *copy_tree(RopeNode *rn);
 
 char* search(RopeTree* rt, int start, int end);
 
+void freeRopeNode(RopeNode* rn);
+
+void freeRopeTree(RopeTree* rt);
+
 #endif  // __ROPE__
