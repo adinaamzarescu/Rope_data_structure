@@ -33,12 +33,12 @@ __4. Split__
       * Split point being the last character of a leaf node
       * Split point being a middle character of a leaf node.
 
-__5.__ Insertion__
+__5. Insertion__
 
   Add a string at position i by splitting the rope at this
 position followed by 2 concatenations
 
-__6.__ Deletion__
+__6. Deletion__
 
   Delete a string from an interval by 2 splits of the rope
 followed by a concatenation
