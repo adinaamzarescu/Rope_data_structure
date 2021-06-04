@@ -22,11 +22,11 @@ nodes in S1.
 
 __2. Index__
 
-  Find the character at ith position
+  Find the character at ith position.
   
 __3. Search__
 
-  Find the characters between 2 positions
+  Find the characters between 2 positions.
 
 __4. Split__
 
@@ -38,9 +38,9 @@ __4. Split__
 __5. Insertion__
 
   Add a string at position i by splitting the rope at this
-position followed by 2 concatenations
+position followed by 2 concatenations.
 
 __6. Deletion__
 
   Delete a string from an interval by 2 splits of the rope
-followed by a concatenation
+followed by a concatenation.
