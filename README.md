@@ -12,6 +12,7 @@ node further up the tree holds the sum of the lengths of all the leaves in its l
 thus divides the whole string into two parts: the left subtree stores the first part of the string, the right subtree
 stores the second part of the string, and a node's weight is the length of the first part.
 
+
 __Operations__
 
   __1. Concatenation__
